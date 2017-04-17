@@ -1,12 +1,12 @@
-package net.opticraft.bungee.plugin.bans;
+package net.opticraft.bungee.plugin.bans.service;
 
 import java.time.Instant;
 
-public class CachedEntry<T> {
+public class CacheEntry<T> {
 	public final T cacheItem;
 	public final Instant expiryTime;
 
-	public CachedEntry(T cacheItem, Instant expiryTime) {
+	public CacheEntry(T cacheItem, Instant expiryTime) {
 		this.cacheItem = cacheItem;
 		this.expiryTime = expiryTime;
 	}

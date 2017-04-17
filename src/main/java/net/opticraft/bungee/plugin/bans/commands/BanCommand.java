@@ -3,8 +3,9 @@ package net.opticraft.bungee.plugin.bans.commands;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.opticraft.bungee.plugin.bans.BanService;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.opticraft.bungee.plugin.UUIDService;
+import net.opticraft.bungee.plugin.bans.service.BanService;
 import net.opticraft.bungee.plugin.core.commands.OpticraftCommand;
 import net.opticraft.bungee.plugin.util.TimeFormatter;
 
@@ -14,10 +15,12 @@ import java.util.UUID;
 
 public class BanCommand extends OpticraftCommand {
 	private final BanService<UUID> userBanService;
+	private final UUIDService uuidService;
 
-	public BanCommand(BanService<UUID> userBanService) {
+	public BanCommand(BanService<UUID> userBanService, UUIDService uuidService) {
 		super("ban", "wat");
 		this.userBanService = userBanService;
+		this.uuidService = uuidService;
 	}
 
 	@Override
@@ -26,17 +29,16 @@ public class BanCommand extends OpticraftCommand {
 	}
 
 	@Override
-	protected BaseComponent getHelpMessage() {
-		BaseComponent component = new TextComponent("Incorrect usage! Synax: /ban <name> [reason] [time]");
-		component.setColor(ChatColor.RED);
-		return component;
+	protected BaseComponent[] getHelpMessage() {
+		return new ComponentBuilder("Incorrect usage! Synax: /ban <name> [reason] [time]")
+				.color(ChatColor.RED)
+				.create();
 	}
 
 	@Override
 	protected void run(CommandSender commandSender, String[] args) {
 		String userToBan = args[0];
 		long timeToBan = 0;
-		// TODO: Need some UUID management nonsense.
 		StringBuilder reasonBuilder = new StringBuilder();
 		for (int i = 0; i < args.length; i++) {
 			if (args[i].startsWith("t:")) {
@@ -50,13 +52,24 @@ public class BanCommand extends OpticraftCommand {
 		String reason = reasonBuilder.length() > 0 ? reasonBuilder.toString().trim() : "No reason provided.";
 		Instant expiryTime = timeToBan > 0 ? Instant.now().plusMillis(timeToBan) : null;
 
-		// TODO: Callback?
-		userBanService.ban(null, null, reason, expiryTime).then(resultWrapper -> {
-			try {
-				boolean success = resultWrapper.get();
-			} catch (Throwable error) {
-				// TODO: think about how to log errors
-				// TODO: Can I interact with the command sender here?
+		uuidService.getUniqueId(userToBan).thenApply(userId -> {
+			if (userId != null) {
+				return userBanService.ban(null, null, reason, expiryTime).thenAccept(success -> {
+					if (success) {
+						commandSender.sendMessage(new ComponentBuilder(String.format("Successfully banned \"%s\"")).color(ChatColor.RED).create());
+					} else {
+						commandSender.sendMessage(new ComponentBuilder(String.format("User \"%s\" is already banned.")).color(ChatColor.RED).create());
+					}
+				});
+			} else {
+				commandSender.sendMessage(new ComponentBuilder(String.format("There is no minecraft user by the name of \"%s\"", userToBan)).color(ChatColor.RED).create());
+				return null;
+			}
+		}).whenComplete((result, error) -> {
+			if (error != null) {
+				commandSender.sendMessage(new ComponentBuilder("Failed to ban user due to an internal, please try again").color(ChatColor.RED).create());
+				// TODO: Need to log an error here.
+				// Would probably pay to extract this out into a helper somewhere, since its going to be a common situation
 			}
 		});
 	}

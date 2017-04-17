@@ -15,7 +15,7 @@ public abstract class OpticraftCommand extends Command {
 
 	protected abstract int getMinArgs();
 
-	protected abstract BaseComponent getHelpMessage();
+	protected abstract BaseComponent[] getHelpMessage();
 
 	protected abstract void run(CommandSender commandSender, String[] args);
 

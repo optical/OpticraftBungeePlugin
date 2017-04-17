@@ -4,10 +4,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 
 // This is the main entrypoint to this project.
 public class OpticraftBungeePlugin extends Plugin {
-
     @Override
     public void onEnable() {
-        getProxy().getPluginManager().registerListener(this, new TestListener());
     }
-
 }

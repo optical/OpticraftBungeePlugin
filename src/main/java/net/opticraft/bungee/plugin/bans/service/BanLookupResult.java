@@ -1,4 +1,4 @@
-package net.opticraft.bungee.plugin.bans;
+package net.opticraft.bungee.plugin.bans.service;
 
 import java.util.ArrayList;
 
