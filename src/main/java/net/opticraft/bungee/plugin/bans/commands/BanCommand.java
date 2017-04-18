@@ -4,7 +4,7 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.opticraft.bungee.plugin.UUIDService;
+import net.opticraft.bungee.plugin.uuid.UuidService;
 import net.opticraft.bungee.plugin.bans.service.BanService;
 import net.opticraft.bungee.plugin.core.commands.OpticraftCommand;
 import net.opticraft.bungee.plugin.util.TimeFormatter;
@@ -15,9 +15,9 @@ import java.util.UUID;
 
 public class BanCommand extends OpticraftCommand {
 	private final BanService<UUID> userBanService;
-	private final UUIDService uuidService;
+	private final UuidService uuidService;
 
-	public BanCommand(BanService<UUID> userBanService, UUIDService uuidService) {
+	public BanCommand(BanService<UUID> userBanService, UuidService uuidService) {
 		super("ban", "wat");
 		this.userBanService = userBanService;
 		this.uuidService = uuidService;

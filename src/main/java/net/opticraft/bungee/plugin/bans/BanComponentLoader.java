@@ -4,6 +4,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
 import net.opticraft.bungee.plugin.bans.service.BanComponentConfiguration;
 import net.opticraft.bungee.plugin.core.OpticraftBungeeComponentLoader;
+import net.opticraft.bungee.plugin.uuid.UuidService;
 import net.opticraft.bungee.plugin.util.ConfigHelper;
 
 import java.time.Duration;
@@ -14,14 +15,15 @@ public class BanComponentLoader implements OpticraftBungeeComponentLoader<BanCom
 	public static final String BANS_CACHE_ENABLED_KEY = "bans.cache.enabled";
 	public static final String BANS_ENABLED_KEY = "bans.enabled";
 	private final Plugin plugin;
+	private final UuidService uuidService;
 
 	private boolean shouldEnable;
 	private boolean shouldCache;
 	private int cacheExpirySeconds;
-	private BanComponentConfiguration banComponentConfiguration;
 
-	public BanComponentLoader(Plugin plugin) {
+	public BanComponentLoader(Plugin plugin, UuidService uuidService) {
 		this.plugin = plugin;
+		this.uuidService = uuidService;
 	}
 
 	@Override
@@ -48,7 +50,7 @@ public class BanComponentLoader implements OpticraftBungeeComponentLoader<BanCom
 	public BanComponent createComponent() {
 		if (shouldEnable) {
 			BanComponentConfiguration banComponentConfiguration = new BanComponentConfiguration(shouldCache, Duration.of(cacheExpirySeconds, ChronoUnit.SECONDS), "");
-			return new BanComponent(banComponentConfiguration, plugin);
+			return new BanComponent(banComponentConfiguration, plugin, uuidService);
 		}
 		return null;
 	}

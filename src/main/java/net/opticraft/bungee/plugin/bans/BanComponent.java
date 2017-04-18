@@ -4,24 +4,24 @@ import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.event.EventHandler;
-import net.opticraft.bungee.plugin.UUIDService;
+import net.opticraft.bungee.plugin.uuid.UuidService;
 import net.opticraft.bungee.plugin.bans.commands.BanCommand;
 import net.opticraft.bungee.plugin.bans.service.*;
-import net.opticraft.bungee.plugin.core.OpticraftComponent;
+import net.opticraft.bungee.plugin.core.OpticraftBungeeComponent;
 
 import java.time.Instant;
 import java.util.UUID;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutorService;
 
-public class BanComponent implements OpticraftComponent {
+public class BanComponent implements OpticraftBungeeComponent {
 	private final BanComponentConfiguration banComponentConfiguration;
 	private final BanService<UUID> userBanService;
 	private final BanService<String> ipBanService;
 	private final Plugin plugin;
-	private final UUIDService uuidService;
+	private final UuidService uuidService;
 
-	public BanComponent(BanComponentConfiguration banComponentConfiguration, Plugin plugin, UUIDService uuidService) {
+	public BanComponent(BanComponentConfiguration banComponentConfiguration, Plugin plugin, UuidService uuidService) {
 		this.uuidService = uuidService;
 		ExecutorService executorService = plugin.getProxy().getScheduler().unsafe().getExecutorService(plugin);
 
